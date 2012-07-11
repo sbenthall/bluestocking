@@ -28,10 +28,8 @@ class Doxament:
         return score, contras
 
     def flip_polarity(self,rel):
-        if rel[0] == '+':
-            return ('-',rel[1],rel[2])
-        else:
-            return ('+',rel[1],rel[2])
+        return (not rel[0],rel[1],rel[2])
+
             
 class Document:
     text = ''
@@ -43,7 +41,7 @@ class Document:
         return Doxament(self.parse_relations())
 
     def neg_scope(self, sentence):
-        neg_words = ['not','never']
+        neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t']
         sentence = sentence.split()
         for ii in xrange(len(sentence)):
             if sentence[ii] in neg_words:
@@ -60,10 +58,8 @@ class Document:
         for x in pair:
             if x[0:4] == "neg_":
                 negated = not negated
-        if negated:
-            return ('-',item1,item2)
-        else:
-            return ('+',item1,item2)
+        return (negated,item1,item2)
+
     
 
     def strip_neg(self,word):
