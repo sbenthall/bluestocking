@@ -15,13 +15,24 @@ class Doxament:
         '''
         total = len(qdox.relations)
         found = 0
+        contras = []
+        
         for r in qdox.relations:
             found += 1 if r in self.relations else 0
-            
+            contra_rel = self.flip_polarity(r)
+            if contra_rel in self.relations:
+                contras.extend(contra_rel) 
+                found -= 1
+
         score = float(found) / total
-        return score
+        return score, contras
 
-
+    def flip_polarity(self,rel):
+        if rel[0] == '+':
+            return ('-',rel[1],rel[2])
+        else:
+            return ('+',rel[1],rel[2])
+            
 class Document:
     text = ''
 
@@ -31,15 +42,49 @@ class Document:
     def to_dox(self):
         return Doxament(self.parse_relations())
 
+    def neg_scope(self, sentence):
+        neg_words = ['not','never']
+        sentence = sentence.split()
+        for ii in xrange(len(sentence)):
+            if sentence[ii] in neg_words:
+                #should really go to next punctuation pt, complementizer(?), clause-boundary 
+                for jj in range(ii+1,len(sentence)):
+                    sentence[jj] = 'neg_%s' % sentence[jj]
+        
+        return sentence
+    
+
+    def convert_to_negprop(self,pair):
+        negated = False
+        item1,item2 = self.strip_neg(pair[0]),self.strip_neg(pair[1])
+        for x in pair:
+            if x[0:4] == "neg_":
+                negated = not negated
+        if negated:
+            return ('-',item1,item2)
+        else:
+            return ('+',item1,item2)
+    
+
+    def strip_neg(self,word):
+        if word[0:4] == "neg_":
+            return word[4:]
+        else:
+            return word
+    
+
     def parse_relations(self):
         sentence_tokenizer = PunktSentenceTokenizer()
         sentences = sentence_tokenizer.sentences_from_text(self.text)
 
         relations = []
         for sentence in sentences:
-            tokens = [w for w in sentence.split() if w.lower() not in stopwords.words("english")]
+            sentence = self.neg_scope(sentence)
+            tokens = [w for w in sentence if w.lower() not in stopwords.words("english")]
             pairs = combinations(tokens,2)
             relations.extend([tuple(pair) for pair in pairs])
+        
+        relations = [self.convert_to_negprop(rel) for rel in relations]
 
         return relations
 
