@@ -25,3 +25,12 @@ print "Consistency score:", kb.query(dox3)
 print "Query document 2"
 print text4
 print "Consistency score:", kb.query(dox4)
+
+
+GOLF_DIR = "tests/golf/"
+g1_doc = Document(open(GOLF_DIR + "g1.txt",'r').read())
+g2_doc = Document(open(GOLF_DIR + "g2.txt",'r').read())
+
+print "Golf Document 1: \n", g1_doc
+print "Golf Document 2: \n", g2_doc
+print compare_docs(g1_doc,g2_doc)

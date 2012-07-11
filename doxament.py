@@ -37,6 +37,9 @@ class Document:
     def __init__(self,text):
         self.text = text
 
+    def __str__(self):
+        return self.text
+
     def to_dox(self):
         return Doxament(self.parse_relations())
 
@@ -89,3 +92,9 @@ def merge(dox1, dox2):
     r2 = list(dox2.relations)
     r1.extend(r2)
     return Doxament(r1)
+
+def compare_docs(doc1,doc2):
+    dox1 = Doxament(doc1.parse_relations())
+    dox2 = Doxament(doc2.parse_relations())
+
+    return dox1.query(dox2)
