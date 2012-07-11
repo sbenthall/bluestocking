@@ -1,9 +1,9 @@
 from doxament import *
 
 text1 = "Today was a good day.  Yesterday was a bad day."
-text2 = "Ice cream is good.  Spinach is bad."
+text2 = "Ice cream is good.  Spinach is bad. Today was not bad."
 text3 = "Today was a good day because I ate ice cream."
-text4 = "Yesterday was good because I ate spinach."
+text4 = "Yesterday was good because I ate spinach. Today was bad."
 
 doc1 = Document(text1)
 doc2 = Document(text2)
