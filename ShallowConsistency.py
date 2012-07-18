@@ -22,9 +22,7 @@ def neg_scope(sentence):
     neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t']
     sentence = sentence.split()
     for ii in xrange(len(sentence)):
-        print sentence[ii]
         if sentence[ii] in neg_words:
-            print "xxx"
             for jj in range(ii+1,len(sentence)):
                 sentence[jj] = 'neg_%s' % sentence[jj] 
     return sentence 
@@ -35,12 +33,11 @@ def shallow_sem_consist(doc1,doc2):
     check_dox = preprocess_doc(doc2)
     consist = 0
     inconsist = 0
-    for word in doc2:
+    for word in check_dox:
         lemmas = list()
-        if word[0:3] == "neg_":
+        if word[0:4] == "neg_":
             lemmas = aggregate_lemmas(word[4:],'antonym')
             for lem in lemmas:
-                print lem
                 inconsist += 1 if lem in summ_dox else 0            
         else:
             lemmas = aggregate_lemmas(word,'synonym')
