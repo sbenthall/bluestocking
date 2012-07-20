@@ -1,6 +1,5 @@
 import parse
 
-
 class Doxament:
     relations = []
 
@@ -18,16 +17,13 @@ class Doxament:
         
         for r in qdox.relations:
             found += 1 if r in self.relations else 0
-            contra_rel = self.flip_polarity(r)
+            contra_rel = r.flip()
             if contra_rel in self.relations:
                 contras.extend(contra_rel) 
                 found -= 1
 
         score = float(found) / total
         return score, contras
-
-    def flip_polarity(self,rel):
-        return (not rel[0],rel[1],rel[2])
 
 def merge(dox1, dox2):
     r1 = list(dox1.relations)
