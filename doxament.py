@@ -1,6 +1,5 @@
-from nltk.tokenize.punkt import PunktSentenceTokenizer
-from nltk.corpus import stopwords
-from itertools import combinations
+import parse
+
 
 class Doxament:
     relations = []
@@ -29,63 +28,6 @@ class Doxament:
 
     def flip_polarity(self,rel):
         return (not rel[0],rel[1],rel[2])
-
-            
-class Document:
-    text = ''
-
-    def __init__(self,text):
-        self.text = text
-
-    def __str__(self):
-        return self.text
-
-    def to_dox(self):
-        return Doxament(self.parse_relations())
-
-    def neg_scope(self, sentence):
-        neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t']
-        sentence = sentence.split()
-        for ii in xrange(len(sentence)):
-            if sentence[ii] in neg_words:
-                #should really go to next punctuation pt, complementizer(?), clause-boundary 
-                for jj in range(ii+1,len(sentence)):
-                    sentence[jj] = 'neg_%s' % sentence[jj]
-        
-        return sentence
-    
-
-    def convert_to_negprop(self,pair):
-        negated = False
-        item1,item2 = self.strip_neg(pair[0]),self.strip_neg(pair[1])
-        for x in pair:
-            if x[0:4] == "neg_":
-                negated = not negated
-        return (negated,item1,item2)
-
-    
-
-    def strip_neg(self,word):
-        if word[0:4] == "neg_":
-            return word[4:]
-        else:
-            return word
-    
-
-    def parse_relations(self):
-        sentence_tokenizer = PunktSentenceTokenizer()
-        sentences = sentence_tokenizer.sentences_from_text(self.text)
-
-        relations = []
-        for sentence in sentences:
-            sentence = self.neg_scope(sentence)
-            tokens = [w for w in sentence if w.lower() not in stopwords.words("english")]
-            pairs = combinations(tokens,2)
-            relations.extend([tuple(pair) for pair in pairs])
-        
-        relations = [self.convert_to_negprop(rel) for rel in relations]
-
-        return relations
 
 def merge(dox1, dox2):
     r1 = list(dox1.relations)
