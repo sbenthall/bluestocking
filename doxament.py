@@ -19,7 +19,7 @@ class Doxament:
             found += 1 if r in self.relations else 0
             contra_rel = r.flip()
             if contra_rel in self.relations:
-                contras.extend(contra_rel) 
+                contras.append(contra_rel) 
                 found -= 1
 
         score = float(found) / total
