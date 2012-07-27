@@ -56,6 +56,7 @@ class Parser:
             # chunking
             # pronoun resolution
             ps = self.neg_scope(sentence)
+            ps = [word.strip(",.?!") for word in ps]
             ps = [w for w in ps if w.lower() not in stopwords.words("english")]
             post.append(ps)
 
