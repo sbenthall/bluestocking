@@ -34,9 +34,7 @@ class GeneralTests(unittest.TestCase):
     def setUp(self):
         self.text1 = "Today was a good day.  Yesterday was a bad day."
         self.text2 = "Ice cream is good.  Spinach is bad. Today was not bad."
-        self.text3 = "Today was a good day because I ate ice cream."
-        self.text4 = "Yesterday was good because I ate spinach. Today was bad."
-        self.text5 = "Today was not good.  Ice cream is not good. Spinach is bad. I hate everything."
+
 
         doc1 = parse.Document(self.text1)
         doc2 = parse.Document(self.text2)
@@ -45,23 +43,29 @@ class GeneralTests(unittest.TestCase):
         self.dox2 = doc2.to_dox()
         self.kb = doxament.merge(self.dox1, self.dox2)
 
-        self.dox3 = parse.Document(self.text3).to_dox()
-        self.dox4 = parse.Document(self.text4).to_dox()
-        self.dox5 = parse.Document(self.text5).to_dox()
-
     def test_queries(self):
 
         print "Knowledge base documents"
         print self.text1
         print self.text2
+
         print "Query document 1"
+        self.text3 = "Today was a good day because I ate ice cream."
+        self.dox3 = parse.Document(self.text3).to_dox()
         print self.text3
         print "Consistency score:", self.kb.query(self.dox3)
         self.assertTrue(self.kb.query(self.dox3)[0] > 0)
+
         print "Query document 2"
+        self.text4 = "Yesterday was good because I ate spinach. Today was bad."
+        self.dox4 = parse.Document(self.text4).to_dox()
         print self.text4
         print "Consistency score:", self.kb.query(self.dox4)
         self.assertTrue(self.kb.query(self.dox4)[0] < 0)
+
+        print "Query document 3"
+        self.text5 = "Today was not good.  Ice cream is not good. Spinach is bad. I hate everything."
+        self.dox5 = parse.Document(self.text5).to_dox()
         print self.text5
         print "Consistency score:", self.kb.query(self.dox5)
 
