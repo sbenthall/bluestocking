@@ -45,23 +45,5 @@ def shallow_sem_consist(doc1,doc2):
                 consist += 1 if lem in summ_dox else 0
     return (consist,inconsist)
 
-def aggregate_lemmas(word,relation):
-    '''
-    Generates a list of synonyms/antonyms for :word: 
-    '''
-    lems = set()
-    if relation == "synonym":
-        sets = [syn.lemmas for syn in wn.synsets(word)]
-    elif relation == "antonym":
-        sets = [syn.lemmas for syn in wn.synsets(word)]
-        sets = list(itertools.chain(*sets))
-        sets = [x.antonyms() for x in sets]
-        sets = [x for x in sets if x]
-        
-    sets = list(itertools.chain(*sets))
-    sets = [lem.name for lem in sets]
-    for x in sets:
-        lems.add(x)
-    return lems
 
 

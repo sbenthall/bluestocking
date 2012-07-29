@@ -2,6 +2,7 @@ import doxament
 
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet as wn
 from itertools import combinations
             
 class Document:
@@ -117,7 +118,16 @@ class Relation:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
+            if self.co == other.co:
+                return ((syno(self.item1,other.item1) and
+                         syno(self.item2,other.item2)) or
+                        (anto(self.item1,other.item1) and
+                         anto(self.item2,other.item2)))
+            else:
+                return ((syno(self.item1,other.item1) and
+                         anto(self.item2,other.item2)) or
+                        (anto(self.item1,other.item1) and
+                         syno(self.item2,other.item2)))
         else:
             return False
 
@@ -129,3 +139,33 @@ class Relation:
 
     def __repr__(self):
         return str((self.co, self.item1, self.item2))
+
+
+
+def syno(item1,item2):
+    #should test synsets, this is dummy
+    return item1 == item2
+
+def anto(item1,item2):
+    #should test antonyms, this is dummy
+    return False
+
+def aggregate_lemmas(word,relation):
+    '''
+    Generates a list of synonyms/antonyms for :word: 
+    '''
+    lems = set()
+    if relation == "synonym":
+        sets = [syn.lemmas for syn in wn.synsets(word)]
+    elif relation == "antonym":
+        sets = [syn.lemmas for syn in wn.synsets(word)]
+        sets = list(itertools.chain(*sets))
+        sets = [x.antonyms() for x in sets]
+        sets = [x for x in sets if x]
+        
+    sets = list(itertools.chain(*sets))
+    sets = [lem.name for lem in sets]
+    for x in sets:
+        lems.add(x)
+    return lems
+
