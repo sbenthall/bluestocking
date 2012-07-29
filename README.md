@@ -7,6 +7,15 @@ To run tests:
 
     python tests.py
 
+To run factchecker demo:
+
+    python factchecker.py test-factchecker.txt
+
+This test a document against the simple English Wikipedia
+articles for each word in the tested document.  Try
+replacing test-factchecker.txt with your own text file!
+
+(Warning: documents with long sentences take longer to query)
 
 Scripts included:
 
