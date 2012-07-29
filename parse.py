@@ -20,7 +20,18 @@ class Document:
         return self.text
 
     def to_dox(self):
-        return doxament.Doxament(Parser(self).parse_relations())    
+        return doxament.Doxament(Parser(self).parse_relations())
+
+    def tokenize(self):
+        '''
+        Returns a list of tokenized sentences
+        '''
+        sentence_tokenizer = PunktSentenceTokenizer()
+        sentences = sentence_tokenizer.sentences_from_text(self.text)
+        sentences = [sentence.split() for sentence in sentences]
+        sentences = [[word.strip(",.?!") for word in sentence]
+                     for sentence in sentences]
+        return sentences
 
 class Parser:
     '''
@@ -34,8 +45,7 @@ class Parser:
         self.doc = doc
 
     def parse_relations(self):
-        sentence_tokenizer = PunktSentenceTokenizer()
-        sentences = sentence_tokenizer.sentences_from_text(self.doc.text)
+        sentences = self.doc.tokenize()
         sentences = self.preprocess(sentences)
 
         relations = []
@@ -57,7 +67,6 @@ class Parser:
             # chunking
             # pronoun resolution
             ps = self.neg_scope(sentence)
-            ps = [word.strip(",.?!") for word in ps]
             ps = [w for w in ps if w.lower() not in stopwords.words("english")]
             post.append(ps)
 
@@ -65,7 +74,6 @@ class Parser:
 
     def neg_scope(self, sentence):
         neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t']
-        sentence = sentence.split()
         for ii in xrange(len(sentence)):
             if sentence[ii] in neg_words:
             #should really go to next punctuation pt, complementizer(?), clause-boundary 
