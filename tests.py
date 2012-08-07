@@ -2,6 +2,7 @@ import doxament
 import parse
 import random
 import unittest
+from pprint import pprint as pp
 
 class TestParserMethods(unittest.TestCase):
     parser = None
@@ -49,8 +50,7 @@ class GeneralTests(unittest.TestCase):
         print self.text1
         print self.text2
         print "Knowledge base relations"
-        print self.kb.relations
-
+        pp(self.kb.relations)
 
         print "Query document 1"
         self.text3 = "Today was a good day because I ate ice cream."
