@@ -20,17 +20,22 @@ class Doxament:
         '''
         total = len(qdox.relations)
         found = 0
+        supported = []
         contras = []
+        novel = []
         
         for r in qdox:
-            found += 1 if r in self else 0
-            contra_rel = r.flip()
-            if contra_rel in self:
-                contras.append(contra_rel) 
+            if r in self:
+                found += 1
+                supported.append(r)
+            elif r.flip() in self:
                 found -= 1
+                contras.append(r.flip())
+            else:
+                novel.append(r)
 
         score = float(found) / total
-        return score, contras
+        return score, contras, supported, novel
 
     def add_relation(self,relation):
         d = self.relations.get(relation.item1,{})

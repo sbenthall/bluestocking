@@ -47,7 +47,11 @@ def main():
     kb = reduce(doxament.merge,doxes)
 
     print 'Querying knowledge base with original document'
-    print kb.query(doc.to_dox())
+    query = kb.query(doc.to_dox())
+    print "Consistency: %d" % (query[0])
+    print "Contradictions: %s" % (str(query[1]))
+    print "Supported: %s" % (str(query[2]))
+    print "Novel: %s" % (str(query[3]))
 
 if __name__ == '__main__':
     main()
