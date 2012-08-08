@@ -12,7 +12,7 @@ To run tests:
 
 To run factchecker demo:
 
-    python factchecker.py test-factchecker.txt
+    python factchecker.py "The sky is not blue."
 
 This test a document against the simple English Wikipedia
 articles for each word in the tested document.  Try
