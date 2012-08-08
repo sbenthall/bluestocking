@@ -3,6 +3,9 @@ bluestocking
 
 An information extraction toolkit.
 
+To discuss the project with use, join our maing list:
+http://groups.google.com/forum/?fromgroups#!forum/bluestocking-dev
+
 To run tests:
 
     python tests.py
