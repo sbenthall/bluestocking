@@ -10,7 +10,6 @@ from nltk.corpus import stopwords
 
 lang = 'simple'
 wiki = wikipedia.Wikipedia(lang)
-default_text = 'test-factchecker.txt'
 
 def lookup_word(word):
     dox = doxament.Doxament([])
@@ -33,10 +32,9 @@ def main():
     text = "Uruguay is not in South America."
 
     try:
-        file_name = sys.argv[1]
-        text = open(file_name,'r').read()
+        text = sys.argv[1]
     except:
-        print 'File undeclared or not existing, using default'
+        print 'No text provided, using default'
         
     doc = parse.Document(text)
     sentences = doc.tokenize()
