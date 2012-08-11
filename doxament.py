@@ -30,7 +30,7 @@ class Doxament:
                 supported.append(r)
             elif r.flip() in self:
                 found -= 1
-                contras.append(r.flip())
+                contras.append(r)
             else:
                 novel.append(r)
 

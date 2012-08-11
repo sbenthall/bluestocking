@@ -71,7 +71,7 @@ class GeneralTests(unittest.TestCase):
         self.dox5 = parse.Document(self.text5).to_dox()
         print self.text5
         print "Consistency score:", self.kb.query(self.dox5)
-        self.assertTrue(parse.Relation(True,'Today','good') in self.kb.query(self.dox5)[1])
+        self.assertTrue(parse.Relation(False,'Today','good') in self.kb.query(self.dox5)[1])
 
 if __name__ == '__main__':
     unittest.main()
