@@ -73,5 +73,13 @@ class GeneralTests(unittest.TestCase):
         print "Consistency score:", self.kb.query(self.dox5)
         self.assertTrue(parse.Relation(False,'Today','good') in self.kb.query(self.dox5)[1])
 
+        print "Query document 4"
+        self.text6 = "Yesterday was good.  Spinach is good."
+        self.dox6 = parse.Document(self.text6).to_dox()
+        print self.text6
+        print "Consistency score:", self.kb.query(self.dox6)
+        # import pdb; pdb.set_trace()
+        self.assertTrue(self.kb.query(self.dox6)[0] < 0)
+
 if __name__ == '__main__':
     unittest.main()

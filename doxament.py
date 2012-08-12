@@ -43,11 +43,28 @@ class Doxament:
         self.relations[relation.item1] = d
 
     def __contains__(self,relation):
-        try:
-            co = self.relations[relation.item1][relation.item2]
-            return co == relation.co
-        except:
-            return False
+        return relation in [r for r in self]
+
+        # this linear search kills performance, but
+        # is necessary because relation equality is
+        # not keyed to items at the moment (because
+        # equality uses a synonymity test
+        #
+        # try:
+        #    co = self.relations[relation.item1][relation.item2]
+        #    return co == relation.co
+        # except:
+        #    return False
+        #
+        # This above code should work when Relation items
+        # are hashable Concepts...though we will need
+        # to search syno/anto combinations thoroughly
+        # (as we do currently in the Relation equality
+        # test).
+        #
+        # For O(1) time, that means concepts will need
+        # to be flip()able to antonyms with consistent
+        # hashing.
 
     def __iter__(self):
         for item1, item2_co in self.relations.items():

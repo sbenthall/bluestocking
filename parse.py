@@ -3,7 +3,7 @@ import doxament
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet as wn
-from itertools import combinations
+from itertools import combinations, chain
             
 class Document:
     '''
@@ -118,8 +118,8 @@ class Relation:
 
     def __init__(self,co,item1,item2):
         self.co = co
-        self.item1 = item1
-        self.item2 = item2
+        self.item1 = item1.lower()
+        self.item2 = item2.lower()
 
     def flip(self):
         return Relation(not self.co, self.item1, self.item2)
@@ -127,6 +127,8 @@ class Relation:
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             if self.co == other.co:
+                # currently, relations represent
+                # cooccurence not predication
                 return ((syno(self.item1,other.item1) and
                          syno(self.item2,other.item2)) or
                         (anto(self.item1,other.item1) and
@@ -148,15 +150,13 @@ class Relation:
     def __repr__(self):
         return str((self.co, self.item1, self.item2))
 
-
-
 def syno(item1,item2):
     #should test synsets, this is dummy
-    return item1 == item2
+    return item1 in aggregate_lemmas(item2,'synonym')
 
 def anto(item1,item2):
     #should test antonyms, this is dummy
-    return False
+    return item1 in aggregate_lemmas(item2,'antonym')
 
 def aggregate_lemmas(word,relation):
     '''
@@ -167,11 +167,11 @@ def aggregate_lemmas(word,relation):
         sets = [syn.lemmas for syn in wn.synsets(word)]
     elif relation == "antonym":
         sets = [syn.lemmas for syn in wn.synsets(word)]
-        sets = list(itertools.chain(*sets))
+        sets = list(chain(*sets))
         sets = [x.antonyms() for x in sets]
         sets = [x for x in sets if x]
         
-    sets = list(itertools.chain(*sets))
+    sets = list(chain(*sets))
     sets = [lem.name for lem in sets]
     for x in sets:
         lems.add(x)
