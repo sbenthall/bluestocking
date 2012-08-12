@@ -10,11 +10,15 @@ To run tests:
 
     python tests.py
 
-To run factchecker demo:
+To run factchecker demo, try this:
 
     python factchecker.py "The sky is not blue."
 
-This test a document against the simple English Wikipedia
+or this:
+
+    python factchecker.py "People never eat fish. Goldfish are unpopular."
+
+This test a document against the Simple English Wikipedia
 articles for each word in the tested document.  Try
 replacing test-factchecker.txt with your own text file!
 
