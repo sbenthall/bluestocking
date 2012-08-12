@@ -59,7 +59,7 @@ class GeneralTests(unittest.TestCase):
 
         self.assertTrue(query("Yesterday was good because I ate spinach. Today was bad.",self.kb)[0] < 0)
 
-        self.assertTrue(parse.Relation(False,'Today','good') in query("Today was not good.  Ice cream is not good. Spinach is bad. I hate everything.",self.kb)[1])
+        self.assertTrue(doxament.Relation(False,'Today','good') in query("Today was not good.  Ice cream is not good. Spinach is bad. I hate everything.",self.kb)[1])
 
         self.assertTrue(query("Yesterday was good.  Spinach is good.",self.kb)[0] < 0)
 
