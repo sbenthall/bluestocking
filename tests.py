@@ -52,34 +52,24 @@ class GeneralTests(unittest.TestCase):
         print "Knowledge base relations"
         pp(self.kb.relations)
 
-        print "Query document 1"
-        self.text3 = "Today was a good day because I ate ice cream."
-        self.dox3 = parse.Document(self.text3).to_dox()
-        print self.text3
-        print "Consistency score:", self.kb.query(self.dox3)
-        self.assertTrue(self.kb.query(self.dox3)[0] > 0)
+        self.counter = 1
+        def query(text,kb):
+            print "Query document %d" % (self.counter)
+            self.counter += 1
+            dox = parse.Document(text).to_dox()
+            print text
+            q = kb.query(dox)
+            print "Query result:"
+            print q
+            return q
 
-        print "Query document 2"
-        self.text4 = "Yesterday was good because I ate spinach. Today was bad."
-        self.dox4 = parse.Document(self.text4).to_dox()
-        print self.text4
-        print "Consistency score:", self.kb.query(self.dox4)
-        self.assertTrue(self.kb.query(self.dox4)[0] < 0)
+        self.assertTrue(query("Today was a good day because I ate ice cream.", self.kb)[0] > 0)
 
-        print "Query document 3"
-        self.text5 = "Today was not good.  Ice cream is not good. Spinach is bad. I hate everything."
-        self.dox5 = parse.Document(self.text5).to_dox()
-        print self.text5
-        print "Consistency score:", self.kb.query(self.dox5)
-        self.assertTrue(parse.Relation(False,'Today','good') in self.kb.query(self.dox5)[1])
+        self.assertTrue(query("Yesterday was good because I ate spinach. Today was bad.",self.kb)[0] < 0)
 
-        print "Query document 4"
-        self.text6 = "Yesterday was good.  Spinach is good."
-        self.dox6 = parse.Document(self.text6).to_dox()
-        print self.text6
-        print "Consistency score:", self.kb.query(self.dox6)
-        # import pdb; pdb.set_trace()
-        self.assertTrue(self.kb.query(self.dox6)[0] < 0)
+        self.assertTrue(parse.Relation(False,'Today','good') in query("Today was not good.  Ice cream is not good. Spinach is bad. I hate everything.",self.kb)[1])
+
+        self.assertTrue(query("Yesterday was good.  Spinach is good.",self.kb)[0] < 0)
 
 if __name__ == '__main__':
     unittest.main()
