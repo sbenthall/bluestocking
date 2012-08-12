@@ -23,14 +23,6 @@ class TestParserMethods(unittest.TestCase):
         self.assertTrue(self.parser.is_neg('neg_foo'))
 
 
-# GOLF_DIR = "tests/golf/"
-# g1_doc = Document(open(GOLF_DIR + "g1.txt",'r').read())
-# g2_doc = Document(open(GOLF_DIR + "g2.txt",'r').read())
-
-# print "Golf Document 1: \n", g1_doc
-# print "Golf Document 2: \n", g2_doc
-# print compare_docs(g1_doc,g2_doc)
-
 class GeneralTests(unittest.TestCase):
     def setUp(self):
         self.text1 = "Today was a good day.  Yesterday was a bad day."
