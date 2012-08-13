@@ -2,7 +2,9 @@ import doxament
 import parse
 import random
 import unittest
+import nltk
 from pprint import pprint as pp
+from parse import Chunkerator, ClauseChunkerator
 
 class TestParserMethods(unittest.TestCase):
     parser = None
@@ -22,6 +24,21 @@ class TestParserMethods(unittest.TestCase):
     def test_is_neg(self):
         self.assertTrue(self.parser.is_neg('neg_foo'))
 
+#   def test_chunk_integration(self):
+#       textchunk = "I am the man."
+#       doc2 = parse.Document(textchunk)
+#       self.parser = parse.Parser(doc2)
+#       ps = self.parser.preprocess([textchunk])
+#       self.assertTrue('the_man' in ps)
+
+
+# GOLF_DIR = "tests/golf/"
+# g1_doc = Document(open(GOLF_DIR + "g1.txt",'r').read())
+# g2_doc = Document(open(GOLF_DIR + "g2.txt",'r').read())
+
+# print "Golf Document 1: \n", g1_doc
+# print "Golf Document 2: \n", g2_doc
+# print compare_docs(g1_doc,g2_doc)
 
 class GeneralTests(unittest.TestCase):
     def setUp(self):
@@ -63,5 +80,44 @@ class GeneralTests(unittest.TestCase):
 
         self.assertTrue(query("Yesterday was good.  Spinach is good.",self.kb)[0] < 0)
 
+
+class TestChunkerator(unittest.TestCase):
+
+   def test_find_chunks(self):
+       rules = """
+           NP: {<DT>?<JJ>*<NN.*>}
+           NP: {<PRP>}
+       """
+       c = Chunkerator(rules, True)
+       textChunk = 'I hate yellow snow because I know the black dogs are the ones who make the stuff.'
+       textChunk = textChunk.split()
+       outsent = c.chunk_sent(textChunk)
+       print c.chunksSeen
+       self.assertTrue(len(c.chunksSeen) == 5)
+
+   def test_chunked_in_output(self):
+       rules = """
+           NP: {<DT>?<JJ>*<NN.*>}
+           NP: {<PRP>}
+       """
+       c = Chunkerator(rules,True)
+       textChunk = 'I hate yellow snow because I know the dogs are the ones who make the nasty stuff.'
+       textChunk = textChunk.split()
+       outsent = c.chunk_sent(textChunk)
+       self.assertTrue('dogs' in outsent)
+
+   def test_clause_chunker(self):
+        rules = """
+               NP: {<DT>?<JJ>*<NN.*>}
+               NP: {<PRP>}
+           """
+        c = Chunkerator(rules,True)
+        clauses = ClauseChunkerator(c)
+        textChunk = 'Men fried potatoes and women fried onions.'
+        outsent = clauses.chunk_sent(textChunk.split())
+        self.assertTrue(len(outsent)==3)
+        self.assertTrue('women_fried_onions.' in outsent)
+        
+        
 if __name__ == '__main__':
     unittest.main()
