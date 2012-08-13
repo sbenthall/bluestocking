@@ -19,8 +19,7 @@ or this:
     python factchecker.py "People never eat fish. Goldfish are unpopular."
 
 This test a document against the Simple English Wikipedia
-articles for each word in the tested document.  Try
-replacing test-factchecker.txt with your own text file!
+articles for each word in the string passed as argument.
 
 (Warning: documents with long sentences take longer to query)
 
