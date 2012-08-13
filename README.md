@@ -30,15 +30,15 @@ Scripts included:
 Defines Document class for wrapping raw text and Parser
 class for extracting Relations from a Document.
 
-Relations encapsulate a semantically significant lexical
-cooccurence.
-
 Documents have a method to turn them into Doxaments (see below).
 
 ### doxament.py
 
 Defines a Doxament class.  A Doxament contains many Relations.
 A Doxament may be queried for consistency with another Doxament.  They may also be merged to form a more complete knowledge base.
+
+Relations encapsulate a semantically significant lexical
+cooccurence.
 
 ### other
 
