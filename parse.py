@@ -7,11 +7,6 @@ from nltk.corpus import stopwords
 from nltk.corpus import wordnet as wn
 from itertools import combinations
 
-rules = """
-    NP: {<DT>?<JJ>*<NN.*>}
-    NP: {<PRP>}
-"""
-
 class Doxament:
     relations = {}
 
@@ -168,6 +163,10 @@ class Parser:
         Returns list of processed tokens, suitable for
         converting to Relations.
         '''
+        rules = """
+		    NP: {<DT>?<JJ>*<NN.*>}
+		    NP: {<PRP>}
+		"""
         post = []
         c = Chunkerator(rules,True)
         for sentence in sentences:
