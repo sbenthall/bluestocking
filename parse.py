@@ -12,11 +12,6 @@ rules = """
     NP: {<PRP>}
 """
 
-clauseRules = """
-            CP: {<PRP> <VB.*>*<VB.*>+ <N+.*>} 
-            CP: {<N+.*> <VB.*>*<VB.*>+ <N+.*>} 
-            """
- 
 class Doxament:
     relations = {}
 
@@ -175,55 +170,38 @@ class Parser:
         '''
         post = []
         c = Chunkerator(rules,True)
-        clauses = ClauseChunkerator(c)
         for sentence in sentences:
-            # part of speech
             sent = c.chunk_sent(sentence)
-            sent = clauses.chunk_sent(sent)
-            # pronoun resolution
-            print sent
-            ps = self.neg_scope(sent)
-            ps = [w for w in ps if w.lower() not in stopwords.words("english")]
+            ps = [w for w in sent if w.lower() not in stopwords.words("english")]
             post.append(ps)
 
-        return post,[c,clauses]
+        return post, c
 
-    def neg_scope(self, sentence):
-        neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t']
-        for ii in xrange(len(sentence)):
-            if sentence[ii] in neg_words:
-            #should really go to next punctuation pt, complementizer(?), clause-boundary 
-                for jj in range(ii+1,len(sentence)):
-                    sentence[jj] = 'neg_%s' % sentence[jj]
-        
-        return sentence
-
-    def parse_sentence(self,sentence,chunkerators):
+    def parse_sentence(self,sentence,chunkerator):
             relations = []
-            for chunker in chunkerators:
-                if chunker.nounChunking:
-                    for chunk in chunker.chunksSeen:
-                        g = Relation(True,chunk,chunker.chunksSeen[chunk])
-                        relations.append(g)
-                        splitchunkpairs = combinations(chunk.split('_'),2)
-                        chunkRels = [self.make_relation(x) for x in splitchunkpairs]
-                        relations.extend(chunkRels)
-                else:
-                    for chunk in chunker.chunksSeen:
-                        splitchunkpairs = combinations(chunk.split('_'),2)
-                        chunkRels = [self.make_relation(x) for x in splitchunkpairs]
-                        relations.extend(chunkRels)
-        
-            #pairs = combinations(sentence,2)
-            #relations = [self.make_relation(p) for p in pairs]
-            #for chunk in chunkerator.chunksSeen:
-            #    g = Relation(True,chunk,chunkerator.chunksSeen[chunk])
-            #    relations.append(g)
-            #    splitchunkpairs = combinations(chunk.split('_'),2)
-            #    chunkRels = [self.make_relation(x) for x in splitchunkpairs]
-            #    relations.extend(chunkRels)
+            # adding noun chunk internal relations
+            for chunk in chunkerator.chunksSeen:
+                g = Relation(True,chunk,chunkerator.chunksSeen[chunk])
+                relations.append(g)
+                splitchunkpairs = combinations(chunk.split('_'),2)
+                chunkRels = [self.make_relation(x) for x in splitchunkpairs]
+                relations.extend(chunkRels)
+            # adding sentence relations 
+            pairs = combinations(sentence,2)
+            sentRels = [self.make_relation(p) for p in pairs]
+            relations.extend(sentRels)
+            self.remove_negwords(relations)
             return relations
-
+    
+    def remove_negwords(self,relations):
+        '''
+        Removes any relation from doxament whose key is a neg_word
+        '''
+        neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t','haven\'t',"didn't",'don\'t','doesn\'t']
+        for word in neg_words:
+            if word in relations:
+                del relations[word]
+                
     def make_relation(self,pair):
         co = True
         item1,item2 = pair
@@ -298,7 +276,6 @@ class Chunkerator:
         Uses the basic nltk tagger to assign tags.
         '''
         #sent = sentence.split()
-        print tag.pos_tag(sentence)
         return tag.pos_tag(sentence)
 
     def initial_chunk(self,tagged_sent):
@@ -323,18 +300,32 @@ class Chunkerator:
             self.chunksSeen[out] = headNoun
         return out
 
+    def neg(self, tree):
+        neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t','haven\'t','didn\'t','don\'t','doesn\'t']
+        for ii in xrange(len(tree)):
+            if tree[ii][0] in neg_words:
+                for jj in range(ii+1,len(tree)):
+                    if type(tree[jj][0]) != types.TupleType:
+                        if tree[jj][1][1]!="C":
+                            blob = 'neg_%s' % str(tree[jj][0])
+                            tree[jj] = (blob,tree[jj][1])
+                        else:
+                            break
+        return tree
+    
+    
     def remake_chunked_sent(self,tree):
         '''
         Reconstitutes the original sentence with chunks treated as atomic.
         '''
         output = '' 
+        neg_words = ['not','never', 'isn\'t','was\'nt','hasn\'t','haven\'t','didn\'t','don\'t','doesn\'t']
         for xx in tree:
             if type(xx[0]) == types.TupleType:      
                 output+= str(self.merge_chunk(xx))+' '
-            else:
+            elif xx[0] not in neg_words:
                 output+= str(xx[0])+' '
         output.rstrip()
-        print output
         return output.split()
 
     def replace_chunk_with_head(self, sentence):
@@ -350,35 +341,11 @@ class Chunkerator:
         '''
         tagged_sent = self.initial_tag(sentence)
         tree = self.initial_chunk(tagged_sent)
+        tree = self.neg(tree)
         out_sent = self.remake_chunked_sent(tree)
         if self.nounChunking:
             out_sent = self.replace_chunk_with_head(out_sent)
         return out_sent
-
-
-
-class ClauseChunkerator(Chunkerator):
-    
-    def __init__(self,Chunker):
-        self.nounChunker = Chunker
-        self.chunkParser = nltk.RegexpParser(clauseRules)
-        self.chunksSeen = dict()
-        self.nounChunking = False
-        
-    def initial_tag(self, sentence):
-        return self.nounChunker.initial_tag(sentence)
-
-
-    def chunk_sent(self,sentence):
-        tagged_sent = self.initial_tag(sentence)
-        tree = self.initial_chunk(tagged_sent)
-        out_sent = self.remake_chunked_sent(tree)
-        for chunk in out_sent:
-            self.chunksSeen[chunk] = chunk
-        return out_sent
-
-
-
 
                 
 def syno(item1,item2):
@@ -408,7 +375,7 @@ def aggregate_lemmas(word,relation):
         lems.add(x)
     return lems
 
-senttt2 = 'The man made some green engines and The woman did yoga.'
+senttt2 = 'The man didn\'t make some green engines, and The woman did yoga.'
 text1 = "Today was a good day.  Yesterday was a bad day."
 doc1 = Document(senttt2)
 dox1 = doc1.to_dox()
