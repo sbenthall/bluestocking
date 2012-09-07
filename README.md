@@ -6,6 +6,8 @@ An information extraction toolkit.
 To discuss the project with use, join our maing list:
 http://groups.google.com/forum/?fromgroups#!forum/bluestocking-dev
 
+This project depends on NLTK.  You will need to install it before running these scripts.
+
 To run tests:
 
     python tests.py
