@@ -1,0 +1,2 @@
+v0.1.0, 25-08-2012 -- Include README in package
+v0.1.0, 25-08-2012 -- Initial release.
