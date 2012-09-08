@@ -1,6 +1,6 @@
 import nltk
 import chunkerator
-import doxament 
+import doxament
 
 from nltk.tokenize.punkt import PunktSentenceTokenizer
 from nltk.corpus import stopwords
@@ -23,7 +23,7 @@ class Document:
         return self.text
 
     def to_dox(self):
-        return Doxament(Parser(self).parse_relations())
+        return doxament.Doxament(Parser(self).parse_relations())
 
     def tokenize(self):
         '''
@@ -124,9 +124,3 @@ class Parser:
     def is_neg(self,word):
         return word[0:4] == "neg_"
 
-
-senttt2 = 'The man didn\'t make some green engines, and The woman did yoga.'
-text1 = "Today was a good day.  Yesterday was a bad day."
-doc1 = Document(senttt2)
-dox1 = doc1.to_dox()
-print dox1.relations

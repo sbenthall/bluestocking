@@ -73,7 +73,7 @@ class TestChunkerator(unittest.TestCase):
            NP: {<DT>?<JJ>*<NN.*>}
            NP: {<PRP>}
        """
-       c = Chunkerator(rules, True)
+       c = chunkerator.Chunkerator(rules, True)
        textChunk = 'I hate yellow snow because I know the black dogs are the ones who make the stuff.'
        textChunk = textChunk.split()
        outsent = c.chunk_sent(textChunk)
@@ -85,7 +85,7 @@ class TestChunkerator(unittest.TestCase):
            NP: {<DT>?<JJ>*<NN.*>}
            NP: {<PRP>}
        """
-       c = Chunkerator(rules,True)
+       c = chunkerator.Chunkerator(rules,True)
        textChunk = 'I hate yellow snow because I know the dogs are the ones who make the nasty stuff.'
        textChunk = textChunk.split()
        outsent = c.chunk_sent(textChunk)
